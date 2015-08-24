@@ -73,6 +73,11 @@ namespace Renci.SshNet
         /// </example>
         public Stream ExtendedOutputStream { get; private set; }
 
+        /// <summary>
+        /// Gets the input stream.
+        /// </summary>
+        public Stream InputStream { get; private set; }
+
         private StringBuilder _result;
         /// <summary>
         /// Gets the command execution result.
@@ -369,9 +374,16 @@ namespace Renci.SshNet
                 this.ExtendedOutputStream = null;
             }
 
+            if (this.InputStream != null)
+            {
+                this.InputStream.Dispose();
+                this.InputStream = null;
+            }
+
             //  Initialize output streams and StringBuilders
             this.OutputStream = new PipeStream();
             this.ExtendedOutputStream = new PipeStream();
+            this.InputStream = new StdinWriteStream(this._channel);
 
             this._result = null;
             this._error = null;
